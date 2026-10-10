@@ -1,3 +1,12 @@
+'''
+
+Submitted by: Fahad Waseem
+Group: N/A
+Major: Computer Networks & IOT
+University: Cnam
+
+'''
+
 import argparse, time, os, csv
 from sniffndetect import SniffnDetect
 
@@ -13,6 +22,10 @@ args = parser.parse_args()
 d = SniffnDetect()
 d.INTERFACE = args.iface
 d.MY_IP = args.victim_ip
+
+#keeping the csv inside the data folder
+os.makedirs("data", exist_ok=True)
+d.CSV_FILE = "data/attacks.csv"
 
 #creating the first row once if the csv does not exist
 if not os.path.exists(d.CSV_FILE):
