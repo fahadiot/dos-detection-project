@@ -60,12 +60,17 @@ class SniffnDetect():
 
     def set_flags(self):
         for category in self.FILTERED_ACTIVITIES:
+            ''''
+                only check for an attack once we have enough packets 
+                commented out the attacker mac part because it was 
+                crashing and i dont use the find attackers feature
+            '''
             if len(self.FILTERED_ACTIVITIES[category]['activities']) > 20:
                 self.FILTERED_ACTIVITIES[category]['flag'] = self.check_avg_time(
                     self.FILTERED_ACTIVITIES[category]['activities'])
-                if self.FILTERED_ACTIVITIES[category]['flag']:
-                    self.FILTERED_ACTIVITIES[category]['attacker-mac'] = list(
-                        set([i[3] for i in self.FILTERED_ACTIVITIES[category]['activities']]))
+                # if self.FILTERED_ACTIVITIES[category]['flag']:
+                #     self.FILTERED_ACTIVITIES[category]['attacker-mac'] = list(
+                #         set([i[3] for i in self.FILTERED_ACTIVITIES[category]['activities']]))
 
     def analyze_packet(self, pkt):
         src_ip, dst_ip, src_port, dst_port, tcp_flags, icmp_type = None, None, None, None, None, None
