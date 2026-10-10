@@ -4,6 +4,7 @@ import ctypes
 import threading
 from scapy.all import *
 from queue import Queue
+import csv
 
 banner = '''-----------------------
 SniffnDetect v.1.1
@@ -13,6 +14,7 @@ SniffnDetect v.1.1
 
 class SniffnDetect():
     def __init__(self):
+        self.CSV_FILE = "attacks.csv"
         self.INTERFACE = conf.iface
         self.MY_IP = [x[4] for x in conf.route.routes if x[2]
                       != '0.0.0.0' and x[3] == self.INTERFACE][0]
@@ -71,6 +73,13 @@ class SniffnDetect():
                 # if self.FILTERED_ACTIVITIES[category]['flag']:
                 #     self.FILTERED_ACTIVITIES[category]['attacker-mac'] = list(
                 #         set([i[3] for i in self.FILTERED_ACTIVITIES[category]['activities']]))
+
+    #writing one detected attack packet into the csv file
+    def log_to_csv(self, timestamp, attack_type, src_ip, length):
+        with open(self.CSV_FILE, "a", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow([timestamp, attack_type, src_ip, length])
+
 
     def analyze_packet(self, pkt):
         src_ip, dst_ip, src_port, dst_port, tcp_flags, icmp_type = None, None, None, None, None, None
@@ -142,6 +151,10 @@ class SniffnDetect():
                     self.FILTERED_ACTIVITIES['TCP-SYNACK']['activities'].append([
                                                                                 pkt.time, ])
                     attack_type = 'TCP-SYNACK PACKET'
+
+        #if the packet looks like an attack it will log it to the csv
+        if attack_type is not None:
+            self.log_to_csv(pkt.time, attack_type, src_ip, len(pkt))
 
         self.RECENT_ACTIVITIES.append(
             [pkt.time, protocol, src_ip, dst_ip, src_mac, dst_mac, src_port, dst_port, load_len, attack_type])

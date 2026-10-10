@@ -1,4 +1,4 @@
-import argparse, time
+import argparse, time, os, csv
 from sniffndetect import SniffnDetect
 
 
@@ -13,6 +13,11 @@ args = parser.parse_args()
 d = SniffnDetect()
 d.INTERFACE = args.iface
 d.MY_IP = args.victim_ip
+
+#creating the first row once if the csv does not exist
+if not os.path.exists(d.CSV_FILE):
+    with open(d.CSV_FILE, "w", newline="") as f:
+        csv.writer(f).writerow(["timestampp", "attack_type", "source_ip", "length"])
 
 
 #Starting the detector and keeping it running until i stop it
