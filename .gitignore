@@ -1,3 +1,5 @@
 venv/
 __pycache__/
 *.csv
+progress.txt
+questions_for_teacher.txt
